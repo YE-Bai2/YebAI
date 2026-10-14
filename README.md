@@ -120,3 +120,27 @@ OPENAI_MODEL=gpt-4o-mini
 - 支持在二次确认后清理当前浏览器的 YebAI 工作流数据。
 - 数据仍保存在浏览器 localStorage；本阶段不提供云端持久化、账号体系或多项目隔离。
 - 备份文件可能包含敏感创作内容，请妥善保存并仅导入可信文件。
+
+
+## 第九阶段：在线部署与 OpenAI 连接诊断
+
+### 无自有域名/服务器时的部署方式
+
+1. 将代码合并到 GitHub 的生产分支（通常为 `main`）。
+2. 在 Vercel 导入仓库 `YE-Bai2/YebAI`，框架选择 Next.js，根目录使用仓库根目录。
+3. 在 Vercel Project → Settings → Environment Variables 中配置：
+   - `OPENAI_API_KEY`：OpenAI API 项目密钥（仅服务端）。
+   - `OPENAI_BASE_URL`：默认 `https://api.openai.com/v1`。
+   - `OPENAI_MODEL`：默认 `gpt-4o-mini`；请确认你的 API 项目可访问该模型。
+4. 保存变量后重新部署。Vercel 会提供默认的 `*.vercel.app` 部署域名，无需先购买自有域名。
+5. 打开 `/settings`，刷新配置状态并点击“测试真实 API 连接”；测试通过后，再到 `/novel` 选择 AI API 模式或使用 `/script/generate`。
+
+### 连接诊断 API
+
+- `GET /api/ai-status`：只返回是否检测到服务端密钥、模型名称和端点主机；不会返回密钥。
+- `POST /api/ai-status`：发送一个很短的 Chat Completions 请求，实际验证上游模型连接。
+- 可通过 `OPENAI_BASE_URL` 指向兼容 Chat Completions 的 API，但需确认目标端点支持当前请求格式。
+
+### 生产环境安全边界
+
+当前项目仍缺少完整登录、云端数据持久化、持久化限流和用户级额度控制。测试接口和现有 AI API 路由可从公网访问；在公开分享网址前，应先增加身份认证、速率限制与用量控制，以避免 API 额度被他人消耗。API Key 必须仅存储在 Vercel 服务端环境变量中，绝不能使用 `NEXT_PUBLIC_OPENAI_API_KEY`。
