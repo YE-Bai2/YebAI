@@ -3,8 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 const MODEL = "fal-ai/flux/dev";
+const recentRequests = new Map<string, number[]>();
+function rateLimited(request: NextRequest) {
+  const key = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const now = Date.now();
+  const recent = (recentRequests.get(key) || []).filter((time) => now - time < 60_000);
+  if (recent.length >= 3) return true;
+  recent.push(now);
+  recentRequests.set(key, recent);
+  return false;
+}
 
 export async function POST(request: NextRequest) {
+  if (rateLimited(request)) return NextResponse.json({ error: "图片生成请求过于频繁，请一分钟后再试。" }, { status: 429 });
   const key = process.env.FAL_KEY?.trim();
   if (!key) return NextResponse.json({ error: "尚未配置 FAL_KEY。请在 Vercel 添加 fal.ai 密钥。" }, { status: 503 });
   const body = await request.json().catch(() => null) as { prompt?: unknown } | null;
