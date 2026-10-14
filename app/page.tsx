@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen, Check, Clapperboard, Clock3, Film, Images, Plus, Sparkles, WandSparkles, X } from "lucide-react";
-import { workflowItems } from "@/lib/navigation";
 
 const initialProjects = [
   { title: "雾中来信", genre: "悬疑 · 都市", updated: "今天 10:24", status: "剧本创作中", progress: 35, color: "from-indigo-200 via-violet-100 to-slate-100", mark: "雾" },
@@ -54,7 +53,7 @@ export default function Dashboard() {
     </section>
 
     <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-      {[{label:"创作项目",value:String(projects.length).padStart(2,"0"),hint:"当前工作区",icon:Clapperboard},{label:"工作流阶段",value:"05",hint:"从文本到影像",icon:Film},{label:"视觉资产",value:"—",hint:"等待素材生成",icon:Images},{label:"生成任务",value:"—",hint:"服务尚未连接",icon:Clock3}].map((s,i)=>{const Icon=s.icon; return <div key={s.label} className="rounded-2xl border border-line bg-white p-4 md:p-5"><div className="flex items-center justify-between"><span className="text-xs text-slate-500 md:text-sm">{s.label}</span><span className="rounded-xl bg-violet-50 p-2 text-brand"><Icon size={17}/></span></div><p className="mt-4 text-2xl font-semibold tracking-tight">{s.value}</p><p className="mt-1 text-[11px] text-slate-400">{s.hint}</p></div>})}
+      {[{label:"创作项目",value:String(projects.length).padStart(2,"0"),hint:"当前工作区",icon:Clapperboard},{label:"工作流阶段",value:"05",hint:"从文本到影像",icon:Film},{label:"视觉资产",value:"—",hint:"等待素材生成",icon:Images},{label:"生成任务",value:"—",hint:"服务尚未连接",icon:Clock3}].map((s)=>{const Icon=s.icon; return <div key={s.label} className="rounded-2xl border border-line bg-white p-4 md:p-5"><div className="flex items-center justify-between"><span className="text-xs text-slate-500 md:text-sm">{s.label}</span><span className="rounded-xl bg-violet-50 p-2 text-brand"><Icon size={17}/></span></div><p className="mt-4 text-2xl font-semibold tracking-tight">{s.value}</p><p className="mt-1 text-[11px] text-slate-400">{s.hint}</p></div>})}
     </section>
 
     <section id="workflow" className="space-y-4">
