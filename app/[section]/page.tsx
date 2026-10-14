@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, CircleDashed, Clapperboard, Film, Images, Settings2, WandSparkles, FolderKanban } from "lucide-react";
-import { workflowItems, primaryItems, settingsItem } from "@/lib/navigation";
+import { workflowItems } from "@/lib/navigation";
 
 const pageDetails: Record<string, { eyebrow: string; title: string; description: string; next: string; nextLabel: string; bullets: string[] }> = {
   novel: { eyebrow: "STAGE 01 · STORY INTELLIGENCE", title: "小说分析", description: "把原始故事整理为可供剧本改编的结构化创作资料。", next: "/script", nextLabel: "进入剧本创作", bullets: ["故事梗概与核心命题", "人物档案、人物弧光与关系图", "主线、支线与关键情节点", "短剧改编建议与分集钩子"] },
