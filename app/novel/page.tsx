@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Check, ChevronDown, CircleHelp, FileText, Lightbulb, LoaderCircle, Sparkles, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Check, CircleHelp, FileText, Lightbulb, LoaderCircle, Sparkles, Users } from "lucide-react";
 
 type Analysis = { logline: string; genre: string[]; themes: string[]; characters: { name: string; role: string; motivation: string }[]; structure: { beat: string; detail: string }[]; adaptation: string[] };
 const sample = "十年前，一场发生在海边小城的火灾夺走了年轻法医林雾的部分记忆。十年后，她回到故乡调查一具身份不明的遗体，发现死者手中握着一枚属于自己童年的旧纽扣。随着调查深入，所有证人都在刻意隐瞒那场火灾的真相，而林雾的导师也逐渐成为案件嫌疑人。她必须在记忆恢复之前，判断自己究竟是追查真相的人，还是被真相追捕的人。";
