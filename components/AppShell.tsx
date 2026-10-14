@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, ChevronDown, CircleHelp, Film, Plus, Sparkles } from "lucide-react";
+import { Bell, ChevronDown, CircleHelp, Film, Sparkles } from "lucide-react";
 import type { ReactNode } from "react";
 import { primaryItems, settingsItem, workflowItems } from "@/lib/navigation";
 
