@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, BookOpen, CheckCircle2, CircleDashed, Clapperboard, Film, Images, Settings2, WandSparkles, FolderKanban } from "lucide-react";
 import { workflowItems } from "@/lib/navigation";
+import AICreator from "@/components/AICreator";
 
 const pageDetails: Record<string, { eyebrow: string; title: string; description: string; next: string; nextLabel: string; bullets: string[] }> = {
   novel: { eyebrow: "STAGE 01 · STORY INTELLIGENCE", title: "小说分析", description: "把原始故事整理为可供剧本改编的结构化创作资料。", next: "/script", nextLabel: "进入剧本创作", bullets: ["故事梗概与核心命题", "人物档案、人物弧光与关系图", "主线、支线与关键情节点", "短剧改编建议与分集钩子"] },
@@ -29,9 +30,10 @@ export default async function SectionPage({ params }: { params: { section: strin
       </div>
       <div className="grid gap-8 p-6 md:grid-cols-[1.1fr_.9fr] md:p-9">
         <div><h2 className="text-base font-semibold">本阶段规划</h2><p className="mt-1 text-sm text-slate-500">以下为第一阶段已规划的功能模块。</p><div className="mt-5 space-y-3">{detail.bullets.map((item,i)=><div key={item} className="flex items-start gap-3 rounded-xl border border-slate-100 p-3.5"><span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-violet-50 text-brand"><CheckCircle2 size={13}/></span><span className="text-sm leading-5 text-slate-700">{item}</span></div>)}</div></div>
-        <div className="flex flex-col rounded-2xl border border-dashed border-violet-200 bg-violet-50/40 p-5"><div className="flex items-center gap-2 text-sm font-semibold"><CircleDashed size={17} className="text-brand"/>功能开发状态</div><span className="mt-4 w-fit rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">界面骨架已建立</span><p className="mt-3 text-sm leading-6 text-slate-500">当前页面提供信息架构和后续开发入口，尚未连接持久化数据、真实 AI 生成或任务队列。</p><div className="mt-5 rounded-xl bg-white p-4"><p className="text-xs text-slate-400">下一步建议</p><p className="mt-1 text-sm font-medium">先定义真实数据结构与交互流程</p><p className="mt-2 text-xs leading-5 text-slate-500">确认输入、输出和编辑规则后，再接入模型服务。</p></div><Link href={detail.next} className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">{detail.nextLabel}<ArrowRight size={16}/></Link>
+        <div className="flex flex-col rounded-2xl border border-dashed border-violet-200 bg-violet-50/40 p-5"><div className="flex items-center gap-2 text-sm font-semibold"><CircleDashed size={17} className="text-brand"/>功能开发状态</div><span className="mt-4 w-fit rounded-full border border-violet-200 bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-700">AI 功能已接入代码</span><p className="mt-3 text-sm leading-6 text-slate-500">本阶段可调用真实文字模型生成结果。首次使用前，需要在 Vercel 配置 OpenRouter 密钥并重新部署。</p><div className="mt-5 rounded-xl bg-white p-4"><p className="text-xs text-slate-400">使用说明</p><p className="mt-1 text-sm font-medium">输入素材并运行 AI 创作</p><p className="mt-2 text-xs leading-5 text-slate-500">模型返回后可复制结果，再用于下一制作环节。</p></div><Link href={detail.next} className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">{detail.nextLabel}<ArrowRight size={16}/></Link>
       </div>
     </div>
   </section>
+    {(["novel", "script", "assets", "storyboard", "projects"] as string[]).includes(section) && <AICreator stage={section as "novel" | "script" | "assets" | "storyboard" | "projects"} title={detail.title} description={detail.description} />}
   </div>;
 }
