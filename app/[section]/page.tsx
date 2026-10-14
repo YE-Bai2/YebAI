@@ -14,8 +14,8 @@ const pageDetails: Record<string, { eyebrow: string; title: string; description:
 
 const iconMap = { novel: BookOpen, script: Clapperboard, assets: Images, storyboard: Film, video: WandSparkles, projects: FolderKanban, settings: Settings2 };
 
-export default async function SectionPage({ params }: { params: Promise<{ section: string }> }) {
-  const { section } = await params;
+export default async function SectionPage({ params }: { params: { section: string } }) {
+  const { section } = params;
   const detail = pageDetails[section];
   if (!detail) return <div className="rounded-2xl border border-line bg-white p-8"><h1 className="text-xl font-semibold">页面不存在</h1><p className="mt-2 text-sm text-slate-500">请从创作工作台选择一个有效的工作流阶段。</p><Link href="/" className="mt-5 inline-flex items-center gap-2 text-sm text-brand"><ArrowLeft size={16}/>返回工作台</Link></div>;
   const Icon = iconMap[section as keyof typeof iconMap] ?? CircleDashed;
