@@ -56,3 +56,21 @@ index.html             # 初始单文件原型，作为视觉与交互参考
 3. 视觉资产生成及文件存储；
 4. 分镜编辑、生成任务队列和视频服务适配；
 5. 日志、用量计费、错误恢复和部署流程。
+
+
+## 第二阶段：故事分析与剧本编辑
+
+- `/novel`：输入故事文本，可运行本地规则演示分析；切换到 AI API 模式后调用服务端分析接口。
+- `/script`：编辑分集标题、梗概、场景、动作描述、角色对白与表演提示。
+- 剧本草稿保存在当前浏览器的 localStorage，可导出为 TXT；尚未同步至云端。
+- `POST /api/analyze`：OpenAI-compatible Chat Completions 接口，API key 仅从服务端环境变量读取。
+
+启用真实模型分析时，在本地 `.env.local` 配置：
+
+```bash
+OPENAI_API_KEY=your_server_side_key
+OPENAI_BASE_URL=https://api.openai.com/v1
+OPENAI_MODEL=gpt-4o-mini
+```
+
+然后重启开发服务器。兼容接口必须支持 Chat Completions 与 JSON object response format。不要把密钥放在以 `NEXT_PUBLIC_` 开头的变量中，也不要提交真实密钥。
