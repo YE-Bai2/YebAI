@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
 
   if (prompt.length < 8) return apiError("请至少输入 8 个字符的画面描述。");
   if (prompt.length > 2500) return apiError("提示词最多 2500 个字符。");
-  if (!(modelKey in MODELS)) return apiError("请选择有效的视频模型。");
+  if (typeof modelKey !== "string" || !(modelKey in MODELS)) return apiError("请选择有效的视频模型。");
   if (!["16:9", "9:16", "1:1"].includes(String(aspectRatio))) return apiError("画面比例无效。");
   const allowedDurations = modelKey === "kling" ? [5, 10, 15] : [5, 6, 8, 10];
   if (!allowedDurations.includes(duration)) return apiError("当前模型不支持所选视频时长。");
