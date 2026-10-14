@@ -42,7 +42,7 @@ export default function AICreator({ stage, title, description }: Props) {
     }
   }
   async function generateImage() {
-    const prompt = imagePrompt.trim() || content.match(/(?:image-generation prompt|image prompt|提示词)[^\\n：:]*[：:]\\s*([^\\n]+)/i)?.[1] || "";
+    const prompt = imagePrompt.trim();
     if (prompt.length < 8) { setError("请先生成视觉资产设定，再输入至少 8 个字符的英文或中文图片提示词。"); return; }
     setImageBusy(true); setError(""); setImageUrl("");
     try {
