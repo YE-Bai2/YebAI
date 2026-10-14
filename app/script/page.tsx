@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowDown, ArrowLeft, ArrowRight, Check, ChevronDown, Clapperboard, Copy, FilePlus2, Film, Plus, Save, Trash2 } from "lucide-react";
+import { ArrowRight, Clapperboard, Copy, FilePlus2, Film, Plus, Save, Trash2 } from "lucide-react";
 
 type Dialogue = { id: string; character: string; line: string; direction: string };
 type Scene = { id: string; heading: string; location: string; time: string; action: string; dialogue: Dialogue[] };
