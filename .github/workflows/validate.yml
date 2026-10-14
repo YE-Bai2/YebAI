@@ -1,9 +1,9 @@
 name: Validate YebAI
 on:
   push:
-    branches: [main, phase-2-story-workflow]
+    branches: [main, phase-2-story-workflow, phase-3-ai-script-generation]
   pull_request:
-    branches: [main]
+    branches: [main, phase-2-story-workflow]
 jobs:
   validate:
     runs-on: ubuntu-latest

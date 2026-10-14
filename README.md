@@ -74,3 +74,12 @@ OPENAI_MODEL=gpt-4o-mini
 ```
 
 然后重启开发服务器。兼容接口必须支持 Chat Completions 与 JSON object response format。不要把密钥放在以 `NEXT_PUBLIC_` 开头的变量中，也不要提交真实密钥。
+
+
+## 第三阶段：AI 剧本初稿生成
+
+- `/script/generate`：输入故事梗概，选择 1–5 集与风格要求，生成分集、场景动作和对白。
+- 从 `/novel` 的分析结果页跳转时，会通过当前标签页的 sessionStorage 临时带入故事原文；不会自动把分析结果当作已审核的剧本设定。
+- `POST /api/generate-script`：服务端调用 OpenAI-compatible Chat Completions，并对返回的分集、场景、对白字段做基础校验与长度限制。
+- 点击“保存并进入编辑器”后，生成稿写入浏览器 localStorage，进入 `/script` 继续编辑。当前仍是本地草稿，不是云端项目数据。
+- 真实生成需要配置上文的服务端模型环境变量。模型生成内容须人工检查人物连续性、版权和事实准确性。
