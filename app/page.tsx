@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Check, Clapperboard, Clock3, Film, Images, Plus, Sparkles, WandSparkles, X } from "lucide-react";
+import { ArrowRight, BookOpen, Check, Clapperboard, Clock3, Film, Images, LoaderCircle, Plus, Sparkles, WandSparkles, X } from "lucide-react";
 
 const initialProjects = [
   { title: "雾中来信", genre: "悬疑 · 都市", updated: "今天 10:24", status: "剧本创作中", progress: 35, color: "from-indigo-200 via-violet-100 to-slate-100", mark: "雾" },
@@ -25,6 +25,30 @@ export default function Dashboard() {
   const [showCreate, setShowCreate] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [analyzed, setAnalyzed] = useState(false);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState("");
+  const [analysisError, setAnalysisError] = useState("");
+  const [analysisModel, setAnalysisModel] = useState("");
+
+  async function analyzeStory() {
+    if (novel.trim().length < 8) { setAnalysisError("请至少输入 8 个字符的故事素材。"); return; }
+    setAnalyzing(true); setAnalyzed(false); setAnalysisError(""); setAnalysisResult(""); setAnalysisModel("");
+    try {
+      const response = await fetch("/api/ai/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stage: "novel", input: novel, context: "请用中文输出故事梗概、核心卖点、主要人物与动机、人物关系、关键转折，以及适合竖屏短剧的前三集钩子。" })
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || `AI 请求失败（HTTP ${response.status}）`);
+      if (!data.content) throw new Error("模型没有返回可显示的文本，请重试。");
+      setAnalysisResult(data.content);
+      setAnalysisModel(data.model || "");
+      setAnalyzed(true);
+    } catch (error) {
+      setAnalysisError(error instanceof Error ? error.message : "AI 分析失败，请检查模型配置后重试。");
+    } finally { setAnalyzing(false); }
+  }
 
   function createProject() {
     const title = projectName.trim();
@@ -45,9 +69,9 @@ export default function Dashboard() {
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur-sm md:p-5">
           <div className="flex items-center justify-between"><div><p className="text-sm font-semibold">从故事开始</p><p className="mt-1 text-xs text-violet-100/60">粘贴一段灵感或小说梗概</p></div><span className="rounded-lg bg-white/10 p-2 text-violet-100"><BookOpen size={17}/></span></div>
-          <textarea value={novel} onChange={e => {setNovel(e.target.value); setAnalyzed(false);}} placeholder="例如：一位失去记忆的女法医，在调查一桩旧案时，发现所有证据都指向十年前失踪的自己……" className="mt-4 min-h-[126px] w-full resize-y rounded-xl border border-white/10 bg-black/15 p-3 text-sm leading-6 text-white outline-none placeholder:text-violet-100/35 focus:border-violet-300/60" />
-          <div className="mt-3 flex items-center justify-between gap-3"><span className="text-[11px] text-violet-100/50">{novel.length} 字符 · 仅本地演示</span><button onClick={() => setAnalyzed(true)} disabled={!novel.trim()} className="inline-flex items-center gap-2 rounded-lg bg-brand px-3 py-2.5 text-xs font-semibold text-white hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-40">{analyzed ? <Check size={14}/> : <Sparkles size={14}/>} {analyzed ? "已记录演示状态" : "开始分析"} </button></div>
-          {analyzed && <p className="mt-3 rounded-lg bg-white/10 px-3 py-2 text-xs leading-5 text-violet-100">演示提示：当前尚未连接大模型。下一阶段将接入故事解析与人物关系提取服务。</p>}
+          <textarea value={novel} onChange={e => {setNovel(e.target.value); setAnalyzed(false); setAnalysisResult(""); setAnalysisError("");}} placeholder="例如：一位失去记忆的女法医，在调查一桩旧案时，发现所有证据都指向十年前失踪的自己……" className="mt-4 min-h-[126px] w-full resize-y rounded-xl border border-white/10 bg-black/15 p-3 text-sm leading-6 text-white outline-none placeholder:text-violet-100/35 focus:border-violet-300/60" />
+          <div className="mt-3 flex items-center justify-between gap-3"><span className="text-[11px] text-violet-100/50">{novel.length} 字符 · 通过服务端 AI 接口分析</span><button onClick={analyzeStory} disabled={analyzing || novel.trim().length < 8} className="inline-flex items-center gap-2 rounded-lg bg-brand px-3 py-2.5 text-xs font-semibold text-white hover:bg-brand-dark disabled:cursor-not-allowed disabled:opacity-40">{analyzing ? <LoaderCircle size={14} className="animate-spin"/> : analyzed ? <Check size={14}/> : <Sparkles size={14}/>} {analyzing ? "正在分析…" : analyzed ? "分析完成" : "开始分析"} </button></div>
+          {analysisError && <p role="alert" className="mt-3 rounded-lg border border-rose-300/30 bg-rose-500/10 px-3 py-2 text-xs leading-5 text-rose-100">{analysisError}</p>}{analyzed && <div className="mt-4 rounded-xl border border-white/15 bg-white/10 p-4"><div className="flex flex-wrap items-center justify-between gap-2"><p className="text-sm font-semibold text-white">AI 故事分析结果</p><span className="text-[11px] text-violet-100/60">{analysisModel ? `模型：${analysisModel}` : "已由 AI 接口返回"}</span></div><pre className="mt-3 whitespace-pre-wrap break-words font-sans text-sm leading-6 text-violet-50">{analysisResult}</pre><div className="mt-3 flex flex-wrap gap-2"><button onClick={() => navigator.clipboard.writeText(analysisResult).then(() => setNotice("分析结果已复制")).catch(() => setNotice("复制失败，请手动选择结果文本"))} className="rounded-lg border border-white/20 px-3 py-2 text-xs hover:bg-white/10">复制分析结果</button><Link href="/script" className="rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#29224F]">进入剧本创作 →</Link></div></div>}
         </div>
       </div>
     </section>
