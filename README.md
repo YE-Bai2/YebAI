@@ -101,3 +101,13 @@ OPENAI_MODEL=gpt-4o-mini
 - 镜头提示词可合并画面描述、摄影参数与绑定资产设定后复制；分镜可导出为 JSON。
 - `POST /api/generate-storyboard`：调用 OpenAI-compatible Chat Completions，将单场戏拆分为 3–8 个镜头，需配置服务端 `OPENAI_API_KEY`。
 - 分镜数据保存于当前浏览器 localStorage。AI 拆镜结果必须人工审核；当前未接入图片/视频生成供应商、云端同步或协作编辑。
+
+
+## 第六阶段：视频生成任务工作台
+
+- `/video`：从本地分镜选择镜头，配置模型标识、片段时长、画幅与额外要求，创建任务记录并导出任务清单/提示词。
+- 演示模式只在当前浏览器保存演示任务，不会调用供应商或生成视频。
+- `POST /api/generate-video`：供应商适配入口；需配置 `VIDEO_API_ENDPOINT` 和 `VIDEO_API_KEY`。为避免假定各供应商 API 一致，端点必须遵循下述 YebAI 通用协议。
+- 请求 JSON：`{ "model": "模型标识", "prompt": "提示词", "duration": 5, "aspect_ratio": "9:16", "metadata": { "shot_id": "分镜 ID", "episode_title": "分集", "scene_title": "场次" } }`。
+- 成功响应 JSON 至少包含 `task_id` 或 `id`，可选 `status` 与 `video_url` / `output_url`。实际供应商需要单独适配鉴权、轮询、回调和结果下载。
+- 任务记录与分镜仍保存在浏览器 localStorage。当前没有云端任务队列、自动状态轮询、Webhook、计费或真实供应商绑定。
