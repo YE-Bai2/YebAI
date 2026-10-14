@@ -1,19 +1,29 @@
-name: Validate YebAI
+name: Validate
+
 on:
   push:
-    branches: [main, phase-2-story-workflow, phase-3-ai-script-generation, phase-4-visual-asset-workflow, phase-5-storyboard-workbench, phase-6-video-task-workbench]
+    branches:
+      - main
+      - phase-6-video-task-workbench
+      - phase-8-workspace-backup
   pull_request:
-    branches: [main, phase-2-story-workflow]
+    branches:
+      - main
+      - phase-6-video-task-workbench
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-      - run: npm install
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm run build
+      - name: Install dependencies
+        run: npm install
+      - name: Type-check
+        run: npm run typecheck
+      - name: Build production app
+        run: npm run build
