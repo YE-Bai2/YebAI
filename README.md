@@ -92,3 +92,12 @@ OPENAI_MODEL=gpt-4o-mini
 - 支持复制提示词、导出 JSON，并将资产设定保存到当前浏览器 localStorage。
 - `POST /api/asset-prompt`：使用服务端模型将资产设定优化为图像提示词，需要配置 `OPENAI_API_KEY`。
 - 当前版本只管理素材元数据和提示词，不会实际生成图片、上传文件或跨设备同步；图像生成供应商与对象存储将在后续阶段接入。
+
+
+## 第五阶段：分镜设计工作台
+
+- `/storyboard`：从浏览器已保存的剧本导入分集与场次，自动建立基础镜头草稿。
+- 支持镜头增删、排序、景别、运镜、时长、画面描述、对白/音效编辑，以及关联角色、场景、道具和服装资产。
+- 镜头提示词可合并画面描述、摄影参数与绑定资产设定后复制；分镜可导出为 JSON。
+- `POST /api/generate-storyboard`：调用 OpenAI-compatible Chat Completions，将单场戏拆分为 3–8 个镜头，需配置服务端 `OPENAI_API_KEY`。
+- 分镜数据保存于当前浏览器 localStorage。AI 拆镜结果必须人工审核；当前未接入图片/视频生成供应商、云端同步或协作编辑。

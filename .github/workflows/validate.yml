@@ -1,7 +1,7 @@
 name: Validate YebAI
 on:
   push:
-    branches: [main, phase-2-story-workflow, phase-3-ai-script-generation, phase-4-visual-asset-workflow]
+    branches: [main, phase-2-story-workflow, phase-3-ai-script-generation, phase-4-visual-asset-workflow, phase-5-storyboard-workbench]
   pull_request:
     branches: [main, phase-2-story-workflow]
 jobs:
