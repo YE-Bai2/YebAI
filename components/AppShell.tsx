@@ -45,7 +45,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-10 flex h-[68px] items-center justify-between border-b border-line bg-white/90 px-5 backdrop-blur md:px-9">
         <div className="flex items-center gap-2 text-sm"><span className="text-slate-400">YebAI</span><span className="text-slate-300">/</span><span className="font-semibold">{activeTitle}</span></div>
         <div className="flex items-center gap-2 sm:gap-4">
-          <span className="hidden items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs text-slate-500 sm:flex"><span className="h-1.5 w-1.5 rounded-full bg-amber-400" />演示模式</span>
+          <span className="hidden items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs text-slate-500 sm:flex"><span className="h-1.5 w-1.5 rounded-full bg-amber-400" />AI 工作流</span>
           <button aria-label="帮助" className="hidden rounded-xl p-2 text-slate-500 hover:bg-slate-100 sm:block"><CircleHelp size={18} /></button>
           <button aria-label="通知" className="relative rounded-xl p-2 text-slate-500 hover:bg-slate-100"><Bell size={18} /><span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-rose-400" /></button>
           <span className="h-8 w-px bg-line" />
@@ -53,7 +53,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
       <main className="mx-auto w-full max-w-[1440px] p-5 md:p-9">{children}</main>
-      <footer className="px-5 pb-6 text-center text-[11px] text-slate-400 md:px-9">YebAI Story Studio · 第一阶段工程骨架 · AI 服务暂未接入</footer>
+      <footer className="px-5 pb-6 text-center text-[11px] text-slate-400 md:px-9">YebAI Story Studio · AI 创作流程 · 使用前请配置模型服务密钥</footer>
     </div>
   </div>;
 }
