@@ -27,6 +27,25 @@ const STAGES = {
 } as const;
 
 type Stage = keyof typeof STAGES;
+type Provider = { name: "OpenAI" | "OpenRouter"; key: string; model: string; endpoint: string };
+function getProvider(): Provider | null {
+  const openAIKey = process.env.OPENAI_API_KEY?.trim();
+  if (openAIKey) return {
+    name: "OpenAI",
+    key: openAIKey,
+    model: process.env.OPENAI_MODEL?.trim() || "gpt-4o-mini",
+    endpoint: "https://api.openai.com/v1/chat/completions"
+  };
+  const routerKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (routerKey) return {
+    name: "OpenRouter",
+    key: routerKey,
+    model: process.env.OPENROUTER_MODEL?.trim() || "openrouter/auto",
+    endpoint: "https://openrouter.ai/api/v1/chat/completions"
+  };
+  return null;
+}
+
 const recent = new Map<string, number[]>();
 function limited(request: NextRequest) {
   const key = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -42,19 +61,20 @@ function err(message: string, status = 400) {
 }
 
 export async function GET() {
+  const provider = getProvider();
   return NextResponse.json({
-    configured: Boolean(process.env.OPENROUTER_API_KEY?.trim()),
-    provider: "OpenRouter",
-    model: process.env.OPENROUTER_MODEL?.trim() || "openrouter/auto",
-    message: process.env.OPENROUTER_API_KEY?.trim()
-      ? "文字创作服务已配置。可点击测试按钮验证 API 凭据。"
-      : "请在 Vercel 环境变量添加 OPENROUTER_API_KEY。此服务不需要 OpenAI API Key。"
+    configured: Boolean(provider),
+    provider: provider?.name || null,
+    model: provider?.model || null,
+    message: provider
+      ? `${provider.name} 文字创作服务已配置。可点击测试按钮验证 API 凭据。`
+      : "请在 Vercel 环境变量添加 OPENAI_API_KEY（官方 OpenAI）或 OPENROUTER_API_KEY（OpenRouter），保存后重新部署。"
   });
 }
 
 export async function POST(request: NextRequest) {
-  const key = process.env.OPENROUTER_API_KEY?.trim();
-  if (!key) return err("尚未配置 OPENROUTER_API_KEY。请在 Vercel 添加 OpenRouter 密钥；不需要 OpenAI API Key。", 503);
+  const provider = getProvider();
+  if (!provider) return err("尚未配置文字模型密钥。请在 Vercel 添加 OPENAI_API_KEY，或使用 OPENROUTER_API_KEY。", 503);
   if (limited(request)) return err("请求过于频繁，请一分钟后再试。", 429);
 
   const body = await request.json().catch(() => null) as { stage?: unknown; input?: unknown; context?: unknown } | null;
@@ -66,18 +86,19 @@ export async function POST(request: NextRequest) {
   if (input.length > 12000) return err("输入内容最多 12000 个字符。");
 
   const stageConfig = STAGES[stage as Stage];
-  const model = process.env.OPENROUTER_MODEL?.trim() || "openrouter/auto";
   try {
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch(provider.endpoint, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${key}`,
+        Authorization: `Bearer ${provider.key}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": process.env.APP_URL || "https://yeb-ai-qsk2.vercel.app",
-        "X-Title": "YebAI Story Studio"
+        ...(provider.name === "OpenRouter" ? {
+          "HTTP-Referer": process.env.APP_URL || "https://yeb-ai-qsk2.vercel.app",
+          "X-Title": "YebAI Story Studio"
+        } : {})
       },
       body: JSON.stringify({
-        model,
+        model: provider.model,
         temperature: 0.7,
         max_tokens: stage === "script" ? 5000 : 3500,
         messages: [
@@ -91,18 +112,18 @@ export async function POST(request: NextRequest) {
     const data = await response.json().catch(() => ({}));
     if (!response.ok) {
       const message = response.status === 401 || response.status === 403
-        ? "OpenRouter 密钥无效或无权限，请检查 OPENROUTER_API_KEY。"
+        ? `${provider.name} 密钥无效或无权限，请检查对应环境变量。`
         : response.status === 402
-          ? "OpenRouter 账户额度不足，请检查余额或模型计费方式。"
+          ? "服务商账户额度不足，请检查余额、计费状态或模型权限。"
           : response.status === 429
             ? "模型请求过于频繁或当前额度不足，请稍后重试。"
             : typeof data?.error?.message === "string" ? data.error.message : "AI 创作请求失败。";
       return err(message, response.status === 401 || response.status === 403 ? 502 : response.status);
     }
     const result = data?.choices?.[0]?.message?.content;
-    if (typeof result !== "string" || !result.trim()) return err("模型没有返回可用文本，请换一个模型重试。", 502);
-    return NextResponse.json({ ok: true, stage, stageTitle: stageConfig.title, model: data.model || model, content: result.trim(), usage: data.usage || null });
+    if (typeof result !== "string" || !result.trim()) return err("模型没有返回可用文本，请检查模型设置后重试。", 502);
+    return NextResponse.json({ ok: true, stage, stageTitle: stageConfig.title, provider: provider.name, model: data.model || provider.model, content: result.trim(), usage: data.usage || null });
   } catch (error) {
-    return err(error instanceof Error && error.name === "TimeoutError" ? "AI 响应超时，请缩短输入或稍后重试。" : "暂时无法连接 OpenRouter，请检查网络或稍后重试。", 502);
+    return err(error instanceof Error && error.name === "TimeoutError" ? "AI 响应超时，请缩短输入或稍后重试。" : `暂时无法连接 ${provider.name}，请检查服务商状态或稍后重试。`, 502);
   }
 }
