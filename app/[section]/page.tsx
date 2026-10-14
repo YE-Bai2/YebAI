@@ -32,5 +32,6 @@ export default async function SectionPage({ params }: { params: { section: strin
         <div className="flex flex-col rounded-2xl border border-dashed border-violet-200 bg-violet-50/40 p-5"><div className="flex items-center gap-2 text-sm font-semibold"><CircleDashed size={17} className="text-brand"/>功能开发状态</div><span className="mt-4 w-fit rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">界面骨架已建立</span><p className="mt-3 text-sm leading-6 text-slate-500">当前页面提供信息架构和后续开发入口，尚未连接持久化数据、真实 AI 生成或任务队列。</p><div className="mt-5 rounded-xl bg-white p-4"><p className="text-xs text-slate-400">下一步建议</p><p className="mt-1 text-sm font-medium">先定义真实数据结构与交互流程</p><p className="mt-2 text-xs leading-5 text-slate-500">确认输入、输出和编辑规则后，再接入模型服务。</p></div><Link href={detail.next} className="mt-auto inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-4 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark">{detail.nextLabel}<ArrowRight size={16}/></Link>
       </div>
     </div>
+  </section>
   </div>;
 }
