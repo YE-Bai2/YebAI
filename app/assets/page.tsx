@@ -2,13 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Check, Clipboard, Download, ImagePlus, LoaderCircle, Plus, RefreshCw, Sparkles, Trash2, Users, MapPin, Shirt, Gem } from "lucide-react";
+import { ArrowRight, Check, Clipboard, Download, ImagePlus, LoaderCircle, RefreshCw, Sparkles, Trash2, Users, MapPin, Shirt, Gem } from "lucide-react";\nimport type { LucideIcon } from "lucide-react";
 
 type Kind = "character" | "scene" | "prop" | "costume";
 type Asset = { id:string; kind:Kind; name:string; description:string; prompt:string; negativePrompt:string; style:string; ratio:string; createdAt:string };
 const KEY="yebai-visual-assets-v1";
 const SCRIPT_KEY="yebai-script-draft-v1";
-const kinds: {id:Kind;label:string;icon:typeof Users;hint:string}[]=[
+const kinds: {id:Kind;label:string;icon:LucideIcon;hint:string}[]=[
  {id:"character",label:"角色",icon:Users,hint:"年龄、面部特征、体态、发型、服装、气质"},
  {id:"scene",label:"场景",icon:MapPin,hint:"空间结构、时代、材质、光线、天气、氛围"},
  {id:"prop",label:"道具",icon:Gem,hint:"形状、材质、磨损、关键细节、剧情用途"},
