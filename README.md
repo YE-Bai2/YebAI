@@ -111,3 +111,12 @@ OPENAI_MODEL=gpt-4o-mini
 - 请求 JSON：`{ "model": "模型标识", "prompt": "提示词", "duration": 5, "aspect_ratio": "9:16", "metadata": { "shot_id": "分镜 ID", "episode_title": "分集", "scene_title": "场次" } }`。
 - 成功响应 JSON 至少包含 `task_id` 或 `id`，可选 `status` 与 `video_url` / `output_url`。实际供应商需要单独适配鉴权、轮询、回调和结果下载。
 - 任务记录与分镜仍保存在浏览器 localStorage。当前没有云端任务队列、自动状态轮询、Webhook、计费或真实供应商绑定。
+
+
+## 第八阶段：工作区备份与恢复
+
+- `/projects` 提供当前浏览器中剧本、视觉资产、分镜和视频任务的统计。
+- 支持导出统一 JSON 备份，并校验格式后恢复备份中的数据类别。
+- 支持在二次确认后清理当前浏览器的 YebAI 工作流数据。
+- 数据仍保存在浏览器 localStorage；本阶段不提供云端持久化、账号体系或多项目隔离。
+- 备份文件可能包含敏感创作内容，请妥善保存并仅导入可信文件。
